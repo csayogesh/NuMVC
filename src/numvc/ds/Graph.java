@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Graph {
 	Vertex[] vertexs;
-	private int cutOff = 100;
+	private int cutOff = 5;
 	double rho = 0.3;
 	double gamma = 0.5;
 	double mean = 1;
@@ -80,11 +80,13 @@ public class Graph {
 			if (uncoveredEdgeExists() == null) {
 				Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
 				removeFromC(u.id);
+				vertexs[u.id - 1].time = elapsedTime;
 				elapsedTime++;
 				continue;
 			}
 			Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
 			removeFromC(u.id);
+			vertexs[u.id - 1].time = elapsedTime;
 			u.confChange = 0;
 			for (Edge e : u.edges) {
 				vertexs[e.id - 1].confChange = 1;
@@ -92,6 +94,7 @@ public class Graph {
 			Edge e = uncoveredEdgeExists();
 			Vertex v = chooseOneVertex(e, elapsedTime);
 			addToC(v.id);
+			vertexs[v.id - 1].time = elapsedTime;
 			for (Edge e1 : v.edges) {
 				vertexs[e1.id - 1].confChange = 1;
 			}
@@ -112,7 +115,7 @@ public class Graph {
 	}
 
 	private void updateMean() {
-		int sum = 0;
+		double sum = 0;
 		for (Vertex vertex : vertexs) {
 			for (Edge e : vertex.edges) {
 				sum += e.w;
@@ -145,7 +148,11 @@ public class Graph {
 					else
 						res = vertexs[e.from - 1];
 				}
+			} else {
+				res = vertexs[e.from - 1];
 			}
+		} else if (vertexs[e.id - 1].confChange == 1) {
+			res = vertexs[e.id - 1];
 		}
 		return res;
 	}
