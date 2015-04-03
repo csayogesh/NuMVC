@@ -7,12 +7,14 @@ public class Vertex {
 	int time;
 	int dscore;
 	int confChange;
+	int id;
 	Edge[] edges;
 
-	Vertex() {
+	Vertex(int id) {
 		this.dscore = 0;
 		this.isInC = false;
 		this.time = 1;
+		this.id = id;
 		this.confChange = 0;
 	}
 
