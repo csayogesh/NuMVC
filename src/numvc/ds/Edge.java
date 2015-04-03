@@ -1,18 +1,20 @@
 package numvc.ds;
 
 public class Edge {
-	int id;
+	int id,from;
 	int w;
 	boolean covered;
 
-	public Edge(int id) {
+	public Edge(int from, int id) {
 		this.id = id;
 		this.w = 1;
 		this.covered = false;
+		this.from = from;
 	}
 
 	@Override
 	public String toString() {
-		return "Edge [id=" + id + ", w=" + w + ", covered=" + covered + "]";
+		return "Edge [id=" + id + ", from=" + from + ", w=" + w + ", covered="
+				+ covered + "]";
 	}
 }

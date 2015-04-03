@@ -5,6 +5,9 @@ import java.util.Arrays;
 public class Graph {
 	Vertex[] vertexs;
 	private int cutOff = 100;
+	double rho = 0.3;
+	double gamma = 0.5;
+	double mean = 1;
 
 	public Graph(int[][] ip) {
 		vertexs = new Vertex[ip.length];
@@ -14,9 +17,10 @@ public class Graph {
 			vertexs[i].edges = new Edge[ip[i].length];
 
 			for (int j = 0; j < ip[i].length; j++) {
-				vertexs[i].edges[j] = new Edge(ip[i][j]);
+				vertexs[i].edges[j] = new Edge(i + 1, ip[i][j]);
 			}
 		}
+		gamma *= vertexs.length;
 	}
 
 	@Override
@@ -71,18 +75,117 @@ public class Graph {
 
 	public void computeNuMVC() {
 		int elapsedTime = 1;
+		computeGreedyVC();
 		while (elapsedTime < cutOff) {
 			if (uncoveredEdgeExists() == null) {
-				getVertexWithHighestDScore();
+				Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
+				removeFromC(u.id);
+				elapsedTime++;
+				continue;
+			}
+			Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
+			removeFromC(u.id);
+			u.confChange = 0;
+			for (Edge e : u.edges) {
+				vertexs[e.id - 1].confChange = 1;
+			}
+			Edge e = uncoveredEdgeExists();
+			Vertex v = chooseOneVertex(e, elapsedTime);
+			addToC(v.id);
+			for (Edge e1 : v.edges) {
+				vertexs[e1.id - 1].confChange = 1;
+			}
+			weightUpdate();
+			updateMean();
+			if (mean >= gamma)
+				updateWeight();
+			elapsedTime++;
+		}
+	}
+
+	private void updateWeight() {
+		for (Vertex vertex : vertexs) {
+			for (Edge e : vertex.edges) {
+				e.w = (int) (rho * e.w);
 			}
 		}
 	}
 
-	private void getVertexWithHighestDScore() {
-		updateDScores();
+	private void updateMean() {
+		int sum = 0;
 		for (Vertex vertex : vertexs) {
-			
+			for (Edge e : vertex.edges) {
+				sum += e.w;
+			}
 		}
+		mean = sum / vertexs.length;
+	}
+
+	private void weightUpdate() {
+		for (Vertex vertex : vertexs) {
+			for (Edge e : vertex.edges) {
+				if (!e.covered) {
+					e.w++;
+				}
+			}
+		}
+	}
+
+	private Vertex chooseOneVertex(Edge e, int k) {
+		updateDScores();
+
+		Vertex res = null;
+		if (vertexs[e.from - 1].confChange == 1) {
+			if (vertexs[e.id - 1].confChange == 1) {
+				if (vertexs[e.id - 1].dscore > vertexs[e.from - 1].dscore) {
+					res = vertexs[e.id - 1];
+				} else if (vertexs[e.id - 1].dscore == vertexs[e.from - 1].dscore) {
+					if ((k - vertexs[e.id - 1].time) > (k - vertexs[e.from - 1].time))
+						res = vertexs[e.id - 1];
+					else
+						res = vertexs[e.from - 1];
+				}
+			}
+		}
+		return res;
+	}
+
+	public Vertex getVertexWithHighestDScoreFromC(int k) {
+		updateDScores();
+		Vertex high_d = null;
+		for (Vertex vertex : vertexs) {
+			if (vertex.isInC) {
+				if (high_d == null) {
+					high_d = vertex;
+					continue;
+				}
+				if (vertex.dscore > high_d.dscore) {
+					high_d = vertex;
+				} else if (vertex.dscore == high_d.dscore) {
+					if ((k - vertex.time) > (k - high_d.time))
+						high_d = vertex;
+					else
+						high_d = high_d;
+				}
+			}
+		}
+		return high_d;
+	}
+
+	private Vertex getVertexWithHighestDScore(int k) {
+		updateDScores();
+		Vertex high_d = vertexs[0];
+		for (Vertex vertex : vertexs) {
+			if (vertex.dscore > high_d.dscore) {
+				high_d = vertex;
+			} else if (vertex.dscore == high_d.dscore) {
+				if ((k - vertex.time) > (k - high_d.time))
+					high_d = vertex;
+				else
+					high_d = high_d;
+			}
+		}
+		return high_d;
 	}
 
 	public void updateDScores() {
@@ -111,6 +214,6 @@ public class Graph {
 				}
 			}
 		}
-		return cost/2;
+		return cost / 2;
 	}
 }

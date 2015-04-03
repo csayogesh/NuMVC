@@ -15,7 +15,7 @@ public class Vertex {
 		this.isInC = false;
 		this.time = 1;
 		this.id = id;
-		this.confChange = 0;
+		this.confChange = 1;
 	}
 
 	@Override
