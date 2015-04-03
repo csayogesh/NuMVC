@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Graph {
 	Vertex[] vertexs;
-	private int cutOff = 5;
+	private int cutOff = 220;
 	double rho = 0.3;
 	double gamma = 0.5;
 	double mean = 1;
@@ -31,8 +31,10 @@ public class Graph {
 	public void computeGreedyVC() {
 		Edge e;
 		while ((e = uncoveredEdgeExists()) != null) {
-			if (!e.covered)
+			if (!e.covered) {
 				addToC(e.id);
+				addToC(e.from);
+			}
 		}
 	}
 
@@ -76,6 +78,7 @@ public class Graph {
 	public void computeNuMVC() {
 		int elapsedTime = 1;
 		computeGreedyVC();
+		System.out.println(this);
 		while (elapsedTime < cutOff) {
 			if (uncoveredEdgeExists() == null) {
 				Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
@@ -147,7 +150,8 @@ public class Graph {
 						res = vertexs[e.id - 1];
 					else
 						res = vertexs[e.from - 1];
-				}
+				} else
+					res = vertexs[e.from - 1];
 			} else {
 				res = vertexs[e.from - 1];
 			}
