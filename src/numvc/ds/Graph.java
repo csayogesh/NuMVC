@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Graph {
 	Vertex[] vertexs;
-	private int cutOff = 220;
+	private int cutOff = 12;
 	double rho = 0.3;
 	double gamma = 0.5;
 	double mean = 1;
@@ -32,9 +32,7 @@ public class Graph {
 		Edge e;
 		while ((e = uncoveredEdgeExists()) != null) {
 			if (!e.covered) {
-				addToC(e.id);
-				addToC(e.from);
-			}
+				addToC(e.id);}
 		}
 	}
 
@@ -118,13 +116,14 @@ public class Graph {
 	}
 
 	private void updateMean() {
-		double sum = 0;
+		double sum = 0, i=0;
 		for (Vertex vertex : vertexs) {
 			for (Edge e : vertex.edges) {
 				sum += e.w;
+				i++;
 			}
 		}
-		mean = sum / vertexs.length;
+		mean = sum / i;
 	}
 
 	private void weightUpdate() {
@@ -145,17 +144,21 @@ public class Graph {
 			if (vertexs[e.id - 1].confChange == 1) {
 				if (vertexs[e.id - 1].dscore > vertexs[e.from - 1].dscore) {
 					res = vertexs[e.id - 1];
-				} else if (vertexs[e.id - 1].dscore == vertexs[e.from - 1].dscore) {
+				} 
+				else if (vertexs[e.id - 1].dscore == vertexs[e.from - 1].dscore) {
 					if ((k - vertexs[e.id - 1].time) > (k - vertexs[e.from - 1].time))
 						res = vertexs[e.id - 1];
 					else
 						res = vertexs[e.from - 1];
-				} else
+				}
+				else
 					res = vertexs[e.from - 1];
-			} else {
+			} 
+			else {
 				res = vertexs[e.from - 1];
 			}
-		} else if (vertexs[e.id - 1].confChange == 1) {
+		} 
+		else if (vertexs[e.id - 1].confChange == 1) {
 			res = vertexs[e.id - 1];
 		}
 		return res;
