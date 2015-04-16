@@ -9,7 +9,7 @@ public class NuMVC {
 		// int ip[][] = { {2, 6 }, { 1, 6, 3 }, { 2, 4, 5 }, { 3 }, {3, 6}, {1,
 		// 2, 5} };
 		Graph graph = new Graph(
-				Converter.convertEdgeList("src/benchworks/frb30-15-3.mis"));
+				Converter.convertEdgeList("src/benchworks/bhoslib/frb59-26-1.mis"));
 		graph.addToC(2);
 		graph.addToC(4);
 		graph.addToC(1);
