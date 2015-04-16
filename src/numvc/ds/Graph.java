@@ -1,10 +1,11 @@
 package numvc.ds;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Graph {
 	Vertex[] vertices;
-	private int cutOff = 12;
+	private int cutOff = 1000;
 	double rho = 0.3;
 	double gamma = 0.5;
 	double mean = 1;
@@ -64,11 +65,26 @@ public class Graph {
 		for (Vertex vertex : vertices) {
 			for (Edge e : vertex.edges) {
 				if (!e.covered) {
-					return e;
+					return randomUncovered();
 				}
 			}
 		}
 		return null;
+	}
+
+	private Edge randomUncovered() {
+		Random rand = new Random();
+		rand.nextInt(100);
+		while (true) {
+			int i = rand.nextInt(vertices.length);
+			Vertex vertex = vertices[i];
+			int j = rand.nextInt(vertex.edges.length);
+			for (; j < vertex.edges.length; j++) {
+				if (!vertex.edges[j].covered) {
+					return vertex.edges[j];
+				}
+			}
+		}
 	}
 
 	public void setEdge(int n, boolean v) {
@@ -245,5 +261,14 @@ public class Graph {
 			}
 		}
 		return cost / 2;
+	}
+
+	public static void main(String[] args) {
+		Random rand = new Random();
+		rand.nextInt(100);
+		System.out.println(rand.nextInt(100));
+		System.out.println(rand.nextInt(100));
+		System.out.println(rand.nextInt(100));
+		System.out.println(rand.nextInt(100));
 	}
 }
