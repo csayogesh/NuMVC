@@ -1,5 +1,7 @@
 package numvc.ds;
 
+import java.util.ArrayList;
+
 public class Graph {
 	Vertex[] vertices;
 	private int cutOff = 12;
@@ -21,13 +23,31 @@ public class Graph {
 		gamma *= vertices.length;
 	}
 
+	public Graph(ArrayList<Integer>[] ip) {
+		vertices = new Vertex[ip.length];
+
+		for (int i = 0; i < ip.length; i++) {
+			vertices[i] = new Vertex(i + 1);
+			vertices[i].edges = new Edge[ip[i].size()];
+
+			for (int j = 0; j < ip[i].size(); j++) {
+				vertices[i].edges[j] = new Edge(i + 1, ip[i].get(j));
+			}
+		}
+		gamma *= vertices.length;
+	}
+
 	@Override
 	public String toString() {
 		String res = "";
+		int cnt = 0;
 		for (Vertex vertex : vertices) {
-			if (vertex.isInC)
+			if (vertex.isInC) {
 				res += vertex.id + " ";
+				cnt++;
+			}
 		}
+		System.out.println("Count = " + cnt);
 		return res;
 	}
 

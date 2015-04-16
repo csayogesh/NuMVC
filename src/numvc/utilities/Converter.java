@@ -9,11 +9,10 @@ public class Converter {
 	private static BufferedReader reader;
 
 	@SuppressWarnings("unchecked")
-	public static void convertEdgeList(String filename) throws IOException {
+	public static ArrayList<Integer>[] convertEdgeList(String filename) throws IOException {
 		reader = new BufferedReader(new FileReader(filename));
 		String line;
 		ArrayList<Integer> list[] = null;
-		// { {2, 6 }, { 1, 6, 3 }, { 2, 4, 5 }, { 3 }, {3, 6}, {1, 2, 5} };
 		while ((line = reader.readLine()) != null) {
 			String[] ls = line.split(" ");
 			if (ls[0].equals("p")) {
@@ -25,11 +24,10 @@ public class Converter {
 				int from = Integer.parseInt(ls[1]);
 				int to = Integer.parseInt(ls[2]);
 				list[from - 1].add(to);
+				list[to - 1].add(from);
 			}
 		}
-		for (ArrayList<Integer> arrayList : list) {
-			System.out.println(arrayList);
-		}
+		return list;
 	}
 
 	public static void main(String[] args) throws IOException {
