@@ -20,7 +20,7 @@ public class Vertex {
 
 	@Override
 	public String toString() {
-		return "\nVertex [id=" + id + ", edges=" + Arrays.toString(edges) + "]";
+		return "\n" + id + ", edges=" + Arrays.toString(edges) + "";
 	}
 
 

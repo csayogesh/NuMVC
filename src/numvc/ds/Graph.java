@@ -1,43 +1,47 @@
 package numvc.ds;
 
-import java.util.Arrays;
-
 public class Graph {
-	Vertex[] vertexs;
+	Vertex[] vertices;
 	private int cutOff = 12;
 	double rho = 0.3;
 	double gamma = 0.5;
 	double mean = 1;
 
 	public Graph(int[][] ip) {
-		vertexs = new Vertex[ip.length];
+		vertices = new Vertex[ip.length];
 
 		for (int i = 0; i < ip.length; i++) {
-			vertexs[i] = new Vertex(i + 1);
-			vertexs[i].edges = new Edge[ip[i].length];
+			vertices[i] = new Vertex(i + 1);
+			vertices[i].edges = new Edge[ip[i].length];
 
 			for (int j = 0; j < ip[i].length; j++) {
-				vertexs[i].edges[j] = new Edge(i + 1, ip[i][j]);
+				vertices[i].edges[j] = new Edge(i + 1, ip[i][j]);
 			}
 		}
-		gamma *= vertexs.length;
+		gamma *= vertices.length;
 	}
 
 	@Override
 	public String toString() {
-		return "Graph [vertexs=" + Arrays.toString(vertexs) + "]";
+		String res = "";
+		for (Vertex vertex : vertices) {
+			if (vertex.isInC)
+				res += vertex.id + " ";
+		}
+		return res;
 	}
 
 	public void computeGreedyVC() {
 		Edge e;
 		while ((e = uncoveredEdgeExists()) != null) {
 			if (!e.covered) {
-				addToC(e.id);}
+				addToC(e.id);
+			}
 		}
 	}
 
 	private Edge uncoveredEdgeExists() {
-		for (Vertex vertex : vertexs) {
+		for (Vertex vertex : vertices) {
 			for (Edge e : vertex.edges) {
 				if (!e.covered) {
 					return e;
@@ -48,10 +52,10 @@ public class Graph {
 	}
 
 	public void setEdge(int n, boolean v) {
-		vertexs[n - 1].isInC = true;
-		for (Edge e : vertexs[n - 1].edges) {
+		vertices[n - 1].isInC = true;
+		for (Edge e : vertices[n - 1].edges) {
 			e.covered = v;
-			for (Edge e1 : vertexs[e.id - 1].edges) {
+			for (Edge e1 : vertices[e.id - 1].edges) {
 				if (e1.id == n) {
 					e1.covered = v;
 					break;
@@ -66,9 +70,9 @@ public class Graph {
 
 	public void removeFromC(int n) {
 		setEdge(n, false);
-		vertexs[n - 1].isInC = false;
-		for (Edge e : vertexs[n - 1].edges) {
-			if (vertexs[e.id - 1].isInC)
+		vertices[n - 1].isInC = false;
+		for (Edge e : vertices[n - 1].edges) {
+			if (vertices[e.id - 1].isInC)
 				addToC(e.id);
 		}
 	}
@@ -76,28 +80,27 @@ public class Graph {
 	public void computeNuMVC() {
 		int elapsedTime = 1;
 		computeGreedyVC();
-		System.out.println(this);
 		while (elapsedTime < cutOff) {
 			if (uncoveredEdgeExists() == null) {
 				Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
 				removeFromC(u.id);
-				vertexs[u.id - 1].time = elapsedTime;
+				vertices[u.id - 1].time = elapsedTime;
 				elapsedTime++;
 				continue;
 			}
 			Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
 			removeFromC(u.id);
-			vertexs[u.id - 1].time = elapsedTime;
+			vertices[u.id - 1].time = elapsedTime;
 			u.confChange = 0;
 			for (Edge e : u.edges) {
-				vertexs[e.id - 1].confChange = 1;
+				vertices[e.id - 1].confChange = 1;
 			}
 			Edge e = uncoveredEdgeExists();
 			Vertex v = chooseOneVertex(e, elapsedTime);
 			addToC(v.id);
-			vertexs[v.id - 1].time = elapsedTime;
+			vertices[v.id - 1].time = elapsedTime;
 			for (Edge e1 : v.edges) {
-				vertexs[e1.id - 1].confChange = 1;
+				vertices[e1.id - 1].confChange = 1;
 			}
 			weightUpdate();
 			updateMean();
@@ -108,7 +111,7 @@ public class Graph {
 	}
 
 	private void updateWeight() {
-		for (Vertex vertex : vertexs) {
+		for (Vertex vertex : vertices) {
 			for (Edge e : vertex.edges) {
 				e.w = (int) (rho * e.w);
 			}
@@ -116,8 +119,8 @@ public class Graph {
 	}
 
 	private void updateMean() {
-		double sum = 0, i=0;
-		for (Vertex vertex : vertexs) {
+		double sum = 0, i = 0;
+		for (Vertex vertex : vertices) {
 			for (Edge e : vertex.edges) {
 				sum += e.w;
 				i++;
@@ -127,7 +130,7 @@ public class Graph {
 	}
 
 	private void weightUpdate() {
-		for (Vertex vertex : vertexs) {
+		for (Vertex vertex : vertices) {
 			for (Edge e : vertex.edges) {
 				if (!e.covered) {
 					e.w++;
@@ -140,26 +143,22 @@ public class Graph {
 		updateDScores();
 
 		Vertex res = null;
-		if (vertexs[e.from - 1].confChange == 1) {
-			if (vertexs[e.id - 1].confChange == 1) {
-				if (vertexs[e.id - 1].dscore > vertexs[e.from - 1].dscore) {
-					res = vertexs[e.id - 1];
-				} 
-				else if (vertexs[e.id - 1].dscore == vertexs[e.from - 1].dscore) {
-					if ((k - vertexs[e.id - 1].time) > (k - vertexs[e.from - 1].time))
-						res = vertexs[e.id - 1];
+		if (vertices[e.from - 1].confChange == 1) {
+			if (vertices[e.id - 1].confChange == 1) {
+				if (vertices[e.id - 1].dscore > vertices[e.from - 1].dscore) {
+					res = vertices[e.id - 1];
+				} else if (vertices[e.id - 1].dscore == vertices[e.from - 1].dscore) {
+					if ((k - vertices[e.id - 1].time) > (k - vertices[e.from - 1].time))
+						res = vertices[e.id - 1];
 					else
-						res = vertexs[e.from - 1];
-				}
-				else
-					res = vertexs[e.from - 1];
-			} 
-			else {
-				res = vertexs[e.from - 1];
+						res = vertices[e.from - 1];
+				} else
+					res = vertices[e.from - 1];
+			} else {
+				res = vertices[e.from - 1];
 			}
-		} 
-		else if (vertexs[e.id - 1].confChange == 1) {
-			res = vertexs[e.id - 1];
+		} else if (vertices[e.id - 1].confChange == 1) {
+			res = vertices[e.id - 1];
 		}
 		return res;
 	}
@@ -167,7 +166,7 @@ public class Graph {
 	public Vertex getVertexWithHighestDScoreFromC(int k) {
 		updateDScores();
 		Vertex high_d = null;
-		for (Vertex vertex : vertexs) {
+		for (Vertex vertex : vertices) {
 			if (vertex.isInC) {
 				if (high_d == null) {
 					high_d = vertex;
@@ -187,8 +186,8 @@ public class Graph {
 	@SuppressWarnings("unused")
 	private Vertex getVertexWithHighestDScore(int k) {
 		updateDScores();
-		Vertex high_d = vertexs[0];
-		for (Vertex vertex : vertexs) {
+		Vertex high_d = vertices[0];
+		for (Vertex vertex : vertices) {
 			if (vertex.dscore > high_d.dscore) {
 				high_d = vertex;
 			} else if (vertex.dscore == high_d.dscore) {
@@ -201,7 +200,7 @@ public class Graph {
 
 	public void updateDScores() {
 		int x = getCost();
-		for (Vertex vertex : vertexs) {
+		for (Vertex vertex : vertices) {
 			int y;
 			if (vertex.isInC) {
 				removeFromC(vertex.id);
@@ -218,7 +217,7 @@ public class Graph {
 
 	private int getCost() {
 		int cost = 0;
-		for (Vertex vertex : vertexs) {
+		for (Vertex vertex : vertices) {
 			for (Edge e : vertex.edges) {
 				if (!e.covered) {
 					cost += e.w;
