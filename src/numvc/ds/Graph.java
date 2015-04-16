@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Graph {
 	Vertex[] vertices;
-	private int cutOff = 1000;
+	private int cutOff = 100;
 	double rho = 0.3;
 	double gamma = 0.5;
 	double mean = 1;
@@ -62,16 +62,21 @@ public class Graph {
 	}
 
 	private Edge uncoveredEdgeExists() {
+		ArrayList<Edge> edges = new ArrayList<Edge>();
 		for (Vertex vertex : vertices) {
 			for (Edge e : vertex.edges) {
 				if (!e.covered) {
-					return randomUncovered();
+					edges.add(e);
 				}
 			}
 		}
-		return null;
+		if (edges.isEmpty())
+			return null;
+		Random rand = new Random();
+		return edges.get(rand.nextInt(edges.size()));
 	}
 
+	@SuppressWarnings("unused")
 	private Edge randomUncovered() {
 		Random rand = new Random();
 		rand.nextInt(100);
