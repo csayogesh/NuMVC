@@ -178,14 +178,13 @@ public class Graph {
 				} else if (vertex.dscore == high_d.dscore) {
 					if ((k - vertex.time) > (k - high_d.time))
 						high_d = vertex;
-					else
-						high_d = high_d;
 				}
 			}
 		}
 		return high_d;
 	}
 
+	@SuppressWarnings("unused")
 	private Vertex getVertexWithHighestDScore(int k) {
 		updateDScores();
 		Vertex high_d = vertexs[0];
@@ -195,8 +194,6 @@ public class Graph {
 			} else if (vertex.dscore == high_d.dscore) {
 				if ((k - vertex.time) > (k - high_d.time))
 					high_d = vertex;
-				else
-					high_d = high_d;
 			}
 		}
 		return high_d;
