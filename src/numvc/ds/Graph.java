@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Graph {
 	Vertex[] vertices;
-	private int cutOff = 2;
+	private int cutOff = 10;
 	double rho = 0.3;
 	double gamma = 0.5;
 	double mean = 1;
@@ -53,12 +53,14 @@ public class Graph {
 	}
 
 	public void computeGreedyVC() {
-		Edge e;
-		while ((e = uncoveredEdgeExists()) != null) {
-			if (!e.covered) {
-				addToC(e.id);
-			}
-		}
+		// Edge e;
+		// while ((e = uncoveredEdgeExists()) != null) {
+		// if (!e.covered) {
+		// addToC(e.id);
+		// }
+		// }
+		for (int i = 0; i < this.vertices.length; i++)
+			addToC(i + 1);
 	}
 
 	private Edge uncoveredEdgeExists() {
@@ -126,7 +128,7 @@ public class Graph {
 				Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
 				removeFromC(u.id);
 				vertices[u.id - 1].time = elapsedTime;
-				elapsedTime++;
+				//elapsedTime++;
 				continue;
 			}
 			Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
