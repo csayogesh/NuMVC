@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Graph {
 	Vertex[] vertices;
-	private int cutOff = 10;
+	public static int cutOff = 10;
 	double rho = 0.3;
 	double gamma = 0.5;
 	double mean = 1;
