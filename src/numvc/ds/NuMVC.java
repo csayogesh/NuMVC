@@ -13,9 +13,10 @@ public class NuMVC {
 		long start = System.currentTimeMillis();
 		Graph graph = new Graph(
 				Converter
-						.convertEdgeList("src/benchworks/bhoslib/frb30-15-1.mis"));
+						.convertEdgeList("src/benchworks/bhoslib/frb30-15-2.mis"));
+		graph.startTime = start;
 		//Graph graph = new Graph(ip);
-		Graph.cutOff = 50;
+		Graph.cutOff = 100000;
 		graph.computeNuMVC();
 		System.out.println(graph);
 		System.out.println("Execution time : "

@@ -9,6 +9,7 @@ public class Graph {
 	double rho = 0.3;
 	double gamma = 0.5;
 	double mean = 1;
+	public long startTime;
 
 	public Graph(int[][] ip) {
 		vertices = new Vertex[ip.length];
@@ -53,14 +54,14 @@ public class Graph {
 	}
 
 	public void computeGreedyVC() {
-		// Edge e;
-		// while ((e = uncoveredEdgeExists()) != null) {
-		// if (!e.covered) {
-		// addToC(e.id);
-		// }
-		// }
-		for (int i = 0; i < this.vertices.length; i++)
-			addToC(i + 1);
+		Edge e;
+		while ((e = uncoveredEdgeExists()) != null) {
+			if (!e.covered) {
+				addToC(e.id);
+			}
+		}
+		// for (int i = 0; i < this.vertices.length; i++)
+		// addToC(i + 1);
 	}
 
 	private Edge uncoveredEdgeExists() {
@@ -124,6 +125,14 @@ public class Graph {
 		int elapsedTime = 1;
 		computeGreedyVC();
 		while (elapsedTime < cutOff) {
+			if (elapsedTime % 100 == 0) {
+				System.out.println(elapsedTime);
+				System.out.println(this);
+				System.out.println("Execution time : "
+						+ (System.currentTimeMillis() - this.startTime) + " ms");
+				System.out.println();
+				System.out.println();
+			}
 			if (uncoveredEdgeExists() == null) {
 				Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
 				removeFromC(u.id);
