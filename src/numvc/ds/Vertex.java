@@ -20,8 +20,8 @@ public class Vertex {
 
 	@Override
 	public String toString() {
-		return "\n" + id + ", edges=" + Arrays.toString(edges) + "";
+		return "\n" + id + " " + isInC + ", edges=" + Arrays.toString(edges)
+				+ "";
 	}
-
 
 }

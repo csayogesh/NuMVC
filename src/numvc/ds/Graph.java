@@ -128,7 +128,7 @@ public class Graph {
 				Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);
 				removeFromC(u.id);
 				vertices[u.id - 1].time = elapsedTime;
-				//elapsedTime++;
+				elapsedTime++;
 				continue;
 			}
 			Vertex u = getVertexWithHighestDScoreFromC(elapsedTime);

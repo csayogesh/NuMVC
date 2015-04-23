@@ -1,7 +1,7 @@
 package numvc.ds;
 
 public class Edge {
-	int id,from;
+	int id, from;
 	int w;
 	boolean covered;
 
@@ -14,7 +14,7 @@ public class Edge {
 
 	@Override
 	public String toString() {
-		return " [" + id + "]";
+		return " [" + id + " " + covered + "]";
 	}
 
 }
